@@ -1,0 +1,26 @@
+@model StepModel
+
+@if(Model != null)
+{
+    <div class="centered" style="font-size: 72px; text-align: center; color: @Model.Colors.ColorAsHex;">
+        <strong>@Model.Colors.ColorAsWord.Name</strong>
+    </div>
+}
+else
+{
+    <div class="centered">
+        <strong>Press space bar to start</strong>
+    </div>
+}
+
+<form id="globalForm" asp-controller="Home" asp-action="GoToNextStep" method="post">
+    <!-- Input and Submit elements -->
+    <input asp-for="Step" type="hidden" />
+    <input asp-for="Colors.ColorAsWord.Name" type="hidden" />    
+    <input asp-for="Colors.ColorAsHex" type="hidden" />    
+    <input asp-for="SameColor" type="hidden" id="sameColorField" />
+    <input asp-for="ElapsedTime" type="hidden" id="elapsedTimeField" />    
+</form>
+
+<script src="~/js/stroop.js"></script>
+

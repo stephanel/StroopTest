@@ -1,0 +1,7 @@
+@model StepModel
+
+<form asp-controller="Home" asp-action="GoToNextStep" method="post">
+    <!-- Input and Submit elements -->
+    <input asp-for="Step" type="hidden" />
+    <button id="button-start">Start</button>
+</form>
