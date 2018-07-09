@@ -8,7 +8,7 @@ namespace StroopTest.Models
         public StroopStepViewComponent()
         { }
 
-        public async Task<IViewComponentResult> InvokeAsync(StepModel model)
+        public IViewComponentResult Invoke(StepModel model)
         {            
             return View(model);
         }

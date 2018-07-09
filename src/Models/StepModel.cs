@@ -4,7 +4,7 @@ namespace StroopTest.Models
 {
     public class StepModel
     {
-        public int Step { get; set; }
+        public int StepNumber { get; set; }
 
         public bool SameColor { get; set; }
         

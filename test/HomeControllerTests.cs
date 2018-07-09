@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Xunit;
 
-namespace test
+namespace StroopTest.Tests
 {
     public class HomeControllerShould
     {
@@ -46,7 +46,7 @@ namespace test
 
             StepModel model = new StepModel()
             {
-                Step = 0
+                StepNumber = 0
             };
 
             // Act
@@ -64,11 +64,11 @@ namespace test
             // Arrange
             var postedModel = new StepModel()
             {
-                Step = 1,
+                StepNumber = 1,
                 ElapsedTime = 1000,
                 SameColor = true,                
             };
-            var expectedModel = new StepModel() { Step = 1 };
+            var expectedModel = new StepModel() { StepNumber = 1 };
 
             var mockSessionStorage = new Mock<ISessionStorage>();
             mockSessionStorage
@@ -102,7 +102,7 @@ namespace test
                 ColorAsHex = "#ff0000",
                 ColorAsWord = Color.Blue
             };
-            var expectedModel = new StepModel() { Step = 1 };
+            var expectedModel = new StepModel() { StepNumber = 1 };
 
             var mockSessionStorage = new Mock<ISessionStorage>();
             mockSessionStorage
@@ -114,7 +114,7 @@ namespace test
 
             var mockTempData = new Mock<ITempDataDictionary>();
             mockTempData
-                .SetupGet(x => x["step"])
+                .SetupGet(x => x[HomeController.TEMP_DATA_STEP_NUMBER_KEY])
                 .Returns(1);
 
             var controller = new HomeController(mockSessionStorage.Object, mockColorProvider.Object, settings);
@@ -130,7 +130,7 @@ namespace test
             // Assert
             var viewResult = Assert.IsType<ViewResult>(actual);
             var model = Assert.IsType<StepModel>(viewResult.ViewData.Model);
-            Assert.Equal(2, model.Step);
+            Assert.Equal(2, model.StepNumber);
             Assert.Equal(expectedColorModel.ColorAsHex, model.Colors.ColorAsHex);
             Assert.Equal(expectedColorModel.ColorAsWord, model.Colors.ColorAsWord);
         }
@@ -143,7 +143,7 @@ namespace test
                 ColorAsHex = "#ff0000",
                 ColorAsWord = Color.Blue
             };
-            var expectedModel = new StepModel() { Step = 2 };
+            var expectedModel = new StepModel() { StepNumber = 2 };
 
             var mockSessionStorage = new Mock<ISessionStorage>();
             mockSessionStorage
@@ -155,7 +155,7 @@ namespace test
 
             var mockTempData = new Mock<ITempDataDictionary>();
             mockTempData
-                .SetupGet(x => x["step"])
+                .SetupGet(x => x[HomeController.TEMP_DATA_STEP_NUMBER_KEY])
                 .Returns(2);
 
             var controller = new HomeController(mockSessionStorage.Object, mockColorProvider.Object, settings);

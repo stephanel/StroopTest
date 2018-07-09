@@ -18,6 +18,9 @@ namespace StroopTest.Controllers
         private readonly IColorProvider _colorProvider;
         private readonly StroopTestSettings _settings;
 
+        public const string TEMP_DATA_STEP_NUMBER_KEY = "stepNumber";
+        private const string SESSION_STORAGE_RESULTS_KEY = "results";
+
         public HomeController(ISessionStorage sessionStorage, IColorProvider colorProvider, StroopTestSettings settings)
         {
             _sessionStorage = sessionStorage;
@@ -35,14 +38,14 @@ namespace StroopTest.Controllers
         [HttpPost]
         public IActionResult GoToNextStep(StepModel model)
         {
-            if(model.Step > 0)
+            if(model.StepNumber > 0)
             {
                 //AddModelToSession(model);
                 UpdateModelInSession(model);           
             }
 
             // storing data in TempData because of PRG pattern
-            TempData["step"] = model.Step;
+            TempData[TEMP_DATA_STEP_NUMBER_KEY] = model.StepNumber;
 
             return RedirectToAction("NextStep");
         }
@@ -51,16 +54,16 @@ namespace StroopTest.Controllers
         public IActionResult NextStep()
         {
             // reading data from TempData because of PRG pattern
-            var step = Convert.ToInt16(TempData["step"]);
+            var stepNumber = Convert.ToInt16(TempData[TEMP_DATA_STEP_NUMBER_KEY]);
 
-            if(step >= _settings.StepsCount)
+            if(stepNumber >= _settings.StepsCount)
             {
                 return RedirectToAction("Finish");
             }
 
             var model = new StepModel()
             {
-                Step = step + 1,
+                StepNumber = stepNumber + 1,
                 Colors = _colorProvider.GetRandomColor()
             };
 
@@ -92,7 +95,7 @@ namespace StroopTest.Controllers
 
             data.Add(model);
 
-            _sessionStorage.SetObjectAsJson("results", data);
+            _sessionStorage.SetObjectAsJson(SESSION_STORAGE_RESULTS_KEY, data);
         }
 
         void UpdateModelInSession(StepModel model){
@@ -100,13 +103,13 @@ namespace StroopTest.Controllers
             var data = GetRegisteredSteps();
 
             var registeredModel = data
-                .Where(x => x.Step == model.Step)
+                .Where(x => x.StepNumber == model.StepNumber)
                 .Single();
 
             registeredModel.ElapsedTime = model.ElapsedTime;
             registeredModel.SameColor = model.SameColor;
 
-            _sessionStorage.SetObjectAsJson("results", data);
+            _sessionStorage.SetObjectAsJson(SESSION_STORAGE_RESULTS_KEY, data);
         }
     }
 }
