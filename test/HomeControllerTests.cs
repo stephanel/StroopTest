@@ -15,6 +15,7 @@ namespace StroopTest.Tests
     public class HomeControllerShould
     {
         [Fact]
+        [Trait("Category", "Controllers")]
         public void Return_A_View_Result_When_Index_Is_Called()
         {
             // Arrange
@@ -32,25 +33,33 @@ namespace StroopTest.Tests
         }
 
         [Fact]
-        public void Redirect_To_NextStep_When_GoToNextStep_Is_Called_With_Step_0_In_Model()
+        [Trait("Category", "Controllers")]
+        public void Redirect_To_NextStep_When_Start_IsCalled()
         {
             // Arrange
+            var expectedColorModel = new ColorsModel()
+            {
+                ColorAsHex = "#ff0000",
+                ColorAsWord = Color.Blue
+            };
+            var expectedModel = new StepModel() { StepNumber = 1 };
+
             var mockSessionStorage = new Mock<ISessionStorage>();
+            mockSessionStorage
+                .Setup(x => x.GetObjectFromJson<List<StepModel>>(It.IsAny<string>()))
+                .Returns(new List<StepModel>() { expectedModel });
+
             var mockColorProvider = new Mock<IColorProvider>();
+            mockColorProvider
+                .Setup(x => x.GetRandomColor())
+                .Returns(expectedColorModel);
+
             var settings = new StroopTestSettings() { StepsCount = 1 };
 
-            var mockTempData = new Mock<ITempDataDictionary>();
-
             var controller = new HomeController(mockSessionStorage.Object, mockColorProvider.Object, settings);
-            controller.TempData = mockTempData.Object;
-
-            StepModel model = new StepModel()
-            {
-                StepNumber = 0
-            };
 
             // Act
-            var actual = controller.GoToNextStep(model);
+            var actual = controller.Start();
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(actual);
@@ -59,7 +68,55 @@ namespace StroopTest.Tests
         }
 
         [Fact]
-        public void Update_Model_In_Session_Then_Redirect_To_NextStep_When_GoToNextStep_Is_Called_With_Step_1_In_Model()
+        [Trait("Category", "Controllers")]
+        public void Return_A_View_Result_When_NextStep_Called()
+        {
+            // Arrange
+            var expectedColorModel = new ColorsModel()
+            {
+                ColorAsHex = "#ff0000",
+                ColorAsWord = Color.Blue
+            };
+            var expectedModel = new StepModel()
+            {
+                Colors = expectedColorModel,
+                StepNumber = 1,
+            };
+
+            var mockSessionStorage = new Mock<ISessionStorage>();
+            mockSessionStorage
+                .Setup(x => x.GetObjectFromJson<List<StepModel>>(It.IsAny<string>()))
+                .Returns(new List<StepModel>() { expectedModel });
+
+            var mockColorProvider = new Mock<IColorProvider>();
+            mockColorProvider
+                .Setup(x => x.GetRandomColor())
+                .Returns(expectedColorModel);
+
+            var settings = new StroopTestSettings() { StepsCount = 10 };
+
+            var mockTempData = new Mock<ITempDataDictionary>();
+            mockTempData
+                .SetupGet(x => x[It.IsAny<string>()])
+                .Returns(0);
+
+            var controller = new HomeController(mockSessionStorage.Object, mockColorProvider.Object, settings);
+            controller.TempData = mockTempData.Object;
+            
+            // Act
+            var actual = controller.NextStep();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(actual);
+            var model = Assert.IsType<StepModel>(viewResult.ViewData.Model);
+            Assert.Equal(1, model.StepNumber);
+            Assert.Equal(expectedColorModel.ColorAsHex, model.Colors.ColorAsHex);
+            Assert.Equal(expectedColorModel.ColorAsWord, model.Colors.ColorAsWord);
+        }
+
+        [Fact]
+        [Trait("Category", "Controllers")]
+        public void Update_Model_In_Session_Then_Redirect_To_NextStep_When_GoToNextStep_Is_Called()
         {
             // Arrange
             var postedModel = new StepModel()
@@ -92,50 +149,11 @@ namespace StroopTest.Tests
             Assert.Equal("NextStep", redirectResult.ActionName);
             Assert.Equal(expectedModel.ElapsedTime, postedModel.ElapsedTime);
             Assert.Equal(expectedModel.SameColor, postedModel.SameColor);
+            mockSessionStorage.Verify(x => x.SetObjectAsJson(It.IsAny<string>(), It.IsAny<List<StepModel>>()));
         }
-
+        
         [Fact]
-        public void Return_A_View_Result_When_NextStep_Called()
-        {
-            // Arrange
-            var expectedColorModel = new ColorsModel() {
-                ColorAsHex = "#ff0000",
-                ColorAsWord = Color.Blue
-            };
-            var expectedModel = new StepModel() { StepNumber = 1 };
-
-            var mockSessionStorage = new Mock<ISessionStorage>();
-            mockSessionStorage
-                .Setup(x => x.GetObjectFromJson<List<StepModel>>(It.IsAny<string>()))
-                .Returns(new List<StepModel>() { expectedModel });
-
-            var mockColorProvider = new Mock<IColorProvider>();
-            var settings = new StroopTestSettings() { StepsCount = 10 };
-
-            var mockTempData = new Mock<ITempDataDictionary>();
-            mockTempData
-                .SetupGet(x => x[HomeController.TEMP_DATA_STEP_NUMBER_KEY])
-                .Returns(1);
-
-            var controller = new HomeController(mockSessionStorage.Object, mockColorProvider.Object, settings);
-            controller.TempData = mockTempData.Object;
-
-            mockColorProvider
-                .Setup(x => x.GetRandomColor())
-                .Returns(expectedColorModel);
-
-            // Act
-            var actual = controller.NextStep();
-
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(actual);
-            var model = Assert.IsType<StepModel>(viewResult.ViewData.Model);
-            Assert.Equal(2, model.StepNumber);
-            Assert.Equal(expectedColorModel.ColorAsHex, model.Colors.ColorAsHex);
-            Assert.Equal(expectedColorModel.ColorAsWord, model.Colors.ColorAsWord);
-        }
-
-        [Fact]
+        [Trait("Category", "Controllers")]
         public void Redirect_To_Finish_When_NextStep_Is_Called_With_Step_Number_Equal_To_Steps_Count()
         {
             // Arrange
@@ -151,19 +169,19 @@ namespace StroopTest.Tests
                 .Returns(new List<StepModel>() { expectedModel });
 
             var mockColorProvider = new Mock<IColorProvider>();
+            mockColorProvider
+                .Setup(x => x.GetRandomColor())
+                .Returns(expectedColorModel);
+
             var settings = new StroopTestSettings() { StepsCount = 2 };
 
             var mockTempData = new Mock<ITempDataDictionary>();
             mockTempData
-                .SetupGet(x => x[HomeController.TEMP_DATA_STEP_NUMBER_KEY])
+                .SetupGet(x => x[It.IsAny<string>()])
                 .Returns(2);
 
             var controller = new HomeController(mockSessionStorage.Object, mockColorProvider.Object, settings);
             controller.TempData = mockTempData.Object;
-
-            mockColorProvider
-                .Setup(x => x.GetRandomColor())
-                .Returns(expectedColorModel);
 
             // Act
             var actual = controller.NextStep();

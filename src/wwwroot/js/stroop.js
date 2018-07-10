@@ -36,7 +36,7 @@ document.onkeydown = function(e) {
 
 function start(){
     document.onkeydown = null;
-    $('#globalForm').submit();
+    window.location = startUrl;
 }
 
 function goNextStep(sameColor, elapsedTime)

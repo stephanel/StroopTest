@@ -9,14 +9,14 @@ namespace StroopTest.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public void Clear()
-        {
-            _httpContextAccessor.HttpContext.Session.Clear();
-        }
-
         public SessionStorage(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
+        }
+
+        public void Clear()
+        {
+            _httpContextAccessor.HttpContext.Session.Clear();
         }
 
         public void SetObjectAsJson(string key, object value)

@@ -19,15 +19,16 @@ namespace StroopTest.Services
         
         public ColorsModel GetRandomColor()
         {
-            Color[] colors = _colorRepository.GetColors();
+            Color[] wordsColors = _colorRepository.GetWordsColors();
+            Color[] inksColors = _colorRepository.GetInksColors();
 
-            int indexName = _randomGenerator.GetRandomInt(0, colors.Length);
-            int indexValue = _randomGenerator.GetRandomInt(0, colors.Length);
+            int wordIndex = _randomGenerator.GetRandomInt(0, wordsColors.Length);
+            int inkIndex = _randomGenerator.GetRandomInt(0, inksColors.Length);
             
             return new ColorsModel()
             {
-                ColorAsWord = colors[indexName],
-                ColorAsHex = colors[indexValue].ToHex()
+                ColorAsWord = wordsColors[wordIndex],
+                ColorAsHex = inksColors[inkIndex].ToHex()
             };
         }
 

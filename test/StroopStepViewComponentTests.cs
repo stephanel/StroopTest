@@ -15,6 +15,7 @@ namespace StroopTest.Tests
     public class StroopStepViewComponentShould
     {
         [Fact]
+        [Trait("Category", "ViewComponents")]
         public void Return_View_Component_With_Step_Model()
         {
             // Arrange

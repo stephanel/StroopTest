@@ -1,4 +1,10 @@
-﻿
+﻿@using StroopTest.Extensions;
+
 <div class="home centered">
-    @await Component.InvokeAsync("StroopStep")
+    Press space bar to start...
 </div>
+
+<script src="~/js/stroop.js"></script>
+<script type="text/javascript">
+    var startUrl = '@Url.GetAction("Start", "Home")';
+</script>

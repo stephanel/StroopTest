@@ -5,7 +5,19 @@ namespace StroopTest.Services
 {
     public class ColorRepository : IColorRepository
     {
-        public Color[] GetColors()
+        public Color[] GetInksColors()
+        {
+            return new Color[]
+            {
+                Color.Red,
+                Color.Blue,
+                Color.Yellow,
+                Color.Green,
+                Color.Black
+            };
+        }
+
+        public Color[] GetWordsColors()
         {
             return new Color[]
             {
@@ -15,6 +27,5 @@ namespace StroopTest.Services
                 Color.Green
             };
         }
-
     }
 }

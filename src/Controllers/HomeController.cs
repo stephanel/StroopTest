@@ -18,7 +18,7 @@ namespace StroopTest.Controllers
         private readonly IColorProvider _colorProvider;
         private readonly StroopTestSettings _settings;
 
-        public const string TEMP_DATA_STEP_NUMBER_KEY = "stepNumber";
+        private const string TEMP_DATA_STEP_NUMBER_KEY = "stepNumber";
         private const string SESSION_STORAGE_RESULTS_KEY = "results";
 
         public HomeController(ISessionStorage sessionStorage, IColorProvider colorProvider, StroopTestSettings settings)
@@ -35,17 +35,18 @@ namespace StroopTest.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult GoToNextStep(StepModel model)
+        public IActionResult Start()
         {
-            if(model.StepNumber > 0)
+            for(var stepNumber=0; stepNumber < _settings.StepsCount; stepNumber++)
             {
-                //AddModelToSession(model);
-                UpdateModelInSession(model);           
-            }
+                var model = new StepModel()
+                {
+                    StepNumber = stepNumber + 1,
+                    Colors = _colorProvider.GetRandomColor()
+                };
 
-            // storing data in TempData because of PRG pattern
-            TempData[TEMP_DATA_STEP_NUMBER_KEY] = model.StepNumber;
+                AddModelToSession(model);
+            }
 
             return RedirectToAction("NextStep");
         }
@@ -61,15 +62,20 @@ namespace StroopTest.Controllers
                 return RedirectToAction("Finish");
             }
 
-            var model = new StepModel()
-            {
-                StepNumber = stepNumber + 1,
-                Colors = _colorProvider.GetRandomColor()
-            };
-
-            AddModelToSession(model);
+            var model = GetModelFromSession(stepNumber + 1);
 
             return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult GoToNextStep(StepModel model)
+        {
+            UpdateModelInSession(model);           
+
+            // storing data in TempData because of PRG pattern
+            TempData[TEMP_DATA_STEP_NUMBER_KEY] = model.StepNumber;
+
+            return RedirectToAction("NextStep");
         }
 
         public IActionResult Finish()
@@ -86,10 +92,10 @@ namespace StroopTest.Controllers
 
         List<StepModel> GetRegisteredSteps()
         {
-            return _sessionStorage.GetObjectFromJson<List<StepModel>>("results");
+            return _sessionStorage.GetObjectFromJson<List<StepModel>>(SESSION_STORAGE_RESULTS_KEY);
         }
 
-        void AddModelToSession(StepModel model){
+        private void AddModelToSession(StepModel model){
 
             var data = GetRegisteredSteps();
 
@@ -98,7 +104,7 @@ namespace StroopTest.Controllers
             _sessionStorage.SetObjectAsJson(SESSION_STORAGE_RESULTS_KEY, data);
         }
 
-        void UpdateModelInSession(StepModel model){
+        private void UpdateModelInSession(StepModel model){
 
             var data = GetRegisteredSteps();
 
@@ -110,6 +116,15 @@ namespace StroopTest.Controllers
             registeredModel.SameColor = model.SameColor;
 
             _sessionStorage.SetObjectAsJson(SESSION_STORAGE_RESULTS_KEY, data);
+        }
+
+        private StepModel GetModelFromSession(int stepNumber)
+        {
+            var data = GetRegisteredSteps();
+
+            return data
+                .Where(x => x.StepNumber == stepNumber)
+                .Single();
         }
     }
 }
