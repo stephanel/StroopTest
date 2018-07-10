@@ -15,7 +15,7 @@ else
 
 <form id="globalForm" asp-controller="Home" asp-action="GoToNextStep" method="post">
     <!-- Input and Submit elements -->
-    <input asp-for="Step" type="hidden" />
+    <input asp-for="StepNumber" type="hidden" />
     <input asp-for="Colors.ColorAsWord.Name" type="hidden" />    
     <input asp-for="Colors.ColorAsHex" type="hidden" />    
     <input asp-for="SameColor" type="hidden" id="sameColorField" />
