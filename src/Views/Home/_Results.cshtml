@@ -1,0 +1,25 @@
+﻿@model List<StepModel>
+
+<table class="table-condensed">
+    <thead>
+        <tr>
+            <td>#</td>
+            <td>Name</td>
+            <td>Hex</td>
+            <td>Response</td>
+            <td>Time</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var step in Model)
+        {
+            <tr>
+                <td>@step.StepNumber</td>
+                <td>@step.Colors.ColorAsWord.Name</td>
+                <td>@step.Colors.ColorAsHex</td>
+                <td>@step.SameColor</td>
+                <td>@step.TimeInSeconds s</td>
+            </tr>
+        }
+    </tbody>
+</table>

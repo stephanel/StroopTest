@@ -4,6 +4,7 @@ using StroopTest.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace StroopTest.Services
 {    public class ColorProvider : IColorProvider
@@ -17,14 +18,47 @@ namespace StroopTest.Services
             _randomGenerator = randomGenerator;
         }
         
-        public ColorsModel GetRandomColor()
+        public ColorsModel GetNeutralColor()
         {
-            Color[] wordsColors = _colorRepository.GetWordsColors();
-            Color[] inksColors = _colorRepository.GetInksColors();
+            Color[] wordsColors = _colorRepository.GetColors();
 
             int wordIndex = _randomGenerator.GetRandomInt(0, wordsColors.Length);
-            int inkIndex = _randomGenerator.GetRandomInt(0, inksColors.Length);
-            
+
+            Color randomColor = wordsColors[wordIndex];
+
+            return new ColorsModel()
+            {
+                ColorAsWord = randomColor,
+                ColorAsHex = Color.Black.ToHex()
+            };
+        }
+
+        public ColorsModel GetCongruentColor()
+        {
+            Color[] wordsColors = _colorRepository.GetColors();
+
+            int wordIndex = _randomGenerator.GetRandomInt(0, wordsColors.Length);
+
+            Color randomColor = wordsColors[wordIndex];
+
+            return new ColorsModel()
+            {
+                ColorAsWord = randomColor,
+                ColorAsHex = randomColor.ToHex()
+            };
+
+        }
+
+        public ColorsModel GetIncongruentColor()
+        {
+            Color[] wordsColors = _colorRepository.GetColors();
+            int wordIndex = _randomGenerator.GetRandomInt(0, wordsColors.Length);
+
+            List<Color> inksColors = wordsColors.ToList();
+            inksColors.RemoveAt(wordIndex);
+
+            int inkIndex = _randomGenerator.GetRandomInt(0, inksColors.Count);
+
             return new ColorsModel()
             {
                 ColorAsWord = wordsColors[wordIndex],

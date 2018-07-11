@@ -4,6 +4,8 @@ namespace StroopTest.Interfaces
 {
     public interface IColorProvider
     {
-        ColorsModel GetRandomColor();
+        ColorsModel GetCongruentColor();
+        ColorsModel GetIncongruentColor();
+        ColorsModel GetNeutralColor();
     }
 }

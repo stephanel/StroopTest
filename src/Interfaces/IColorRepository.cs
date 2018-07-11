@@ -4,7 +4,6 @@ namespace StroopTest.Interfaces
 {
     public interface IColorRepository
     {
-        Color[] GetWordsColors();
-        Color[] GetInksColors();
+        Color[] GetColors();
     }
 }

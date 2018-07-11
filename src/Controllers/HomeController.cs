@@ -20,6 +20,7 @@ namespace StroopTest.Controllers
 
         private const string TEMP_DATA_STEP_NUMBER_KEY = "stepNumber";
         private const string SESSION_STORAGE_RESULTS_KEY = "results";
+        private const int NUMBER_OF_EACH = 10;
 
         public HomeController(ISessionStorage sessionStorage, IColorProvider colorProvider, StroopTestSettings settings)
         {
@@ -35,18 +36,45 @@ namespace StroopTest.Controllers
             return View();
         }
 
-        public IActionResult Start()
+        private List<StepModel> GenerateRandomsColorsModels(Func<ColorsModel> funcToRandomColorsModel, ref int stepNumber)
         {
-            for(var stepNumber=0; stepNumber < _settings.StepsCount; stepNumber++)
+            var models = new List<StepModel>();
+
+            for (var i = 1; i <= NUMBER_OF_EACH; i++)
             {
                 var model = new StepModel()
                 {
-                    StepNumber = stepNumber + 1,
-                    Colors = _colorProvider.GetRandomColor()
+                    StepNumber = stepNumber,
+                    Colors = funcToRandomColorsModel()
                 };
 
-                AddModelToSession(model);
+                models.Add(model);
+
+                stepNumber++;
             }
+
+            return models;
+        }
+        public IActionResult Start()
+        {
+            var models = new List<StepModel>();
+
+            int stepNumber = 1;
+
+            var congruentModels = GenerateRandomsColorsModels(() => _colorProvider.GetCongruentColor(), ref stepNumber);
+            var incongruentModels = GenerateRandomsColorsModels(() => _colorProvider.GetIncongruentColor(), ref stepNumber);
+            var neutralModels = GenerateRandomsColorsModels(() => _colorProvider.GetNeutralColor(), ref stepNumber);
+
+            models.AddRange(congruentModels);
+            models.AddRange(incongruentModels);
+            models.AddRange(neutralModels);
+
+            // random sort
+            //var rnd = new Random();
+            //models = models.OrderBy(item => rnd.Next()).ToList();
+            models.Shuffle();
+
+            AddModelsToSession(models);
 
             return RedirectToAction("NextStep");
         }
@@ -57,7 +85,7 @@ namespace StroopTest.Controllers
             // reading data from TempData because of PRG pattern
             var stepNumber = Convert.ToInt16(TempData[TEMP_DATA_STEP_NUMBER_KEY]);
 
-            if(stepNumber >= _settings.StepsCount)
+            if(stepNumber >= NUMBER_OF_EACH * 3)    // * 3 => congruents, incongruents and neutrals
             {
                 return RedirectToAction("Finish");
             }
@@ -80,7 +108,14 @@ namespace StroopTest.Controllers
 
         public IActionResult Finish()
         {
-            var model = GetRegisteredSteps();
+            var stepModels = GetRegisteredSteps();
+
+            var model = new ResultsModel()
+            {
+                CongruentWords = stepModels.Where(x => x.IsCongruent).ToList(),
+                IncongruentWords = stepModels.Where(x => x.IsIncongruent).ToList(),
+                NeutralWords = stepModels.Where(x => x.IsNeutral).ToList()
+            };
 
             return View(model);
         }
@@ -94,13 +129,14 @@ namespace StroopTest.Controllers
         {
             return _sessionStorage.GetObjectFromJson<List<StepModel>>(SESSION_STORAGE_RESULTS_KEY);
         }
-
-        private void AddModelToSession(StepModel model){
-
+       
+        private void AddModelsToSession(List<StepModel> models)
+        {
             var data = GetRegisteredSteps();
-
-            data.Add(model);
-
+            foreach (var model in models)
+            {
+                data.Add(model);
+            }
             _sessionStorage.SetObjectAsJson(SESSION_STORAGE_RESULTS_KEY, data);
         }
 
