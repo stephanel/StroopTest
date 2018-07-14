@@ -1,20 +1,37 @@
+@using StroopTest.Extensions;
+
 @model ResultsModel
 
 <div class="centered">
 
-    <span class="col-md-4">
-        <p><strong>Congruent Words</strong></p>
-        @Html.Partial("_Results", Model.CongruentWords);
-    </span>
+    <div class="row">
 
-    <span class="col-md-4">
-        <p><strong>Incongruent Words</strong></p>
-        @Html.Partial("_Results", Model.IncongruentWords);
-    </span>
+        <div class="col-md-6">
+            <p><strong>Congruent Words</strong></p>
+            @Html.Partial("_Results", Model.CongruentWords)
+        </div>
 
-    <span class="col-md-4">
-        <p><strong>Neutral Words</strong></p>
-        @Html.Partial("_Results", Model.NeutralWords);
-    </span>
+        <div class="col-md-6">
+            <p><strong>Incongruent Words</strong></p>
+            @Html.Partial("_Results", Model.IncongruentWords)
+        </div>
+
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <button id="btnRestart" class="btn">Restart</button>
+    </div>
 
 </div>
+
+
+<script type="text/javascript">
+var indexUrl = '@Url.GetAction("Index", "Home")';
+</script>
+
+@section Scripts
+{
+    <script src="~/js/finish.js"></script>
+}

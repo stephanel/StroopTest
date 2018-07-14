@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StroopTest.Configuration;
-using StroopTest.Extensions;
 using StroopTest.Interfaces;
 using StroopTest.Models;
 
@@ -20,7 +18,7 @@ namespace StroopTest.Controllers
 
         private const string TEMP_DATA_STEP_NUMBER_KEY = "stepNumber";
         private const string SESSION_STORAGE_RESULTS_KEY = "results";
-        private const int NUMBER_OF_EACH = 10;
+        private const int NUMBER_OF_EACH = 20;
 
         public HomeController(ISessionStorage sessionStorage, IColorProvider colorProvider, StroopTestSettings settings)
         {
@@ -63,16 +61,19 @@ namespace StroopTest.Controllers
 
             var congruentModels = GenerateRandomsColorsModels(() => _colorProvider.GetCongruentColor(), ref stepNumber);
             var incongruentModels = GenerateRandomsColorsModels(() => _colorProvider.GetIncongruentColor(), ref stepNumber);
-            var neutralModels = GenerateRandomsColorsModels(() => _colorProvider.GetNeutralColor(), ref stepNumber);
 
             models.AddRange(congruentModels);
             models.AddRange(incongruentModels);
-            models.AddRange(neutralModels);
 
             // random sort
-            //var rnd = new Random();
-            //models = models.OrderBy(item => rnd.Next()).ToList();
-            models.Shuffle();
+            var rnd = new Random();
+            models = models
+                .OrderBy(item => rnd.Next())
+                .Select((item,index) => {
+                    item.StepNumber = index + 1;
+                    return item;
+                })
+                .ToList();
 
             AddModelsToSession(models);
 
@@ -85,7 +86,7 @@ namespace StroopTest.Controllers
             // reading data from TempData because of PRG pattern
             var stepNumber = Convert.ToInt16(TempData[TEMP_DATA_STEP_NUMBER_KEY]);
 
-            if(stepNumber >= NUMBER_OF_EACH * 3)    // * 3 => congruents, incongruents and neutrals
+            if(stepNumber >= NUMBER_OF_EACH * 2)    // * 3 => congruents, incongruents and neutrals
             {
                 return RedirectToAction("Finish");
             }
@@ -112,9 +113,14 @@ namespace StroopTest.Controllers
 
             var model = new ResultsModel()
             {
-                CongruentWords = stepModels.Where(x => x.IsCongruent).ToList(),
-                IncongruentWords = stepModels.Where(x => x.IsIncongruent).ToList(),
-                NeutralWords = stepModels.Where(x => x.IsNeutral).ToList()
+                CongruentWords = new ResultsSetModel()
+                {
+                    Results = stepModels.Where(x => x.IsCongruent).ToList()
+                },
+                IncongruentWords = new ResultsSetModel()
+                {
+                    Results = stepModels.Where(x => x.IsIncongruent).ToList()
+                }
             };
 
             return View(model);

@@ -51,5 +51,13 @@ namespace StroopTest.Models
         }
 
         public ColorsModel Colors { get; set; }
+
+        public bool ResponseIsCorrect
+        {
+            get
+            {
+                return SameColor && Colors.ColorAsHex.Equals(Colors.ColorAsWord.ToHex());
+            }
+        }
     }
 }

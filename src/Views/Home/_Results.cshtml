@@ -1,4 +1,6 @@
-﻿@model List<StepModel>
+﻿@using StroopTest.Extensions;
+
+@model ResultsSetModel
 
 <table class="table-condensed">
     <thead>
@@ -11,15 +13,24 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var step in Model)
+        @foreach (var result in Model.Results)
         {
+            var responseIsCorrect = @result.ResponseIsCorrect ? "#008000" : "#ff0000";
+
             <tr>
-                <td>@step.StepNumber</td>
-                <td>@step.Colors.ColorAsWord.Name</td>
-                <td>@step.Colors.ColorAsHex</td>
-                <td>@step.SameColor</td>
-                <td>@step.TimeInSeconds s</td>
+                <td class="col-md-1">@result.StepNumber</td>
+                <td style="color: #fff; background-color: @result.Colors.ColorAsWord.ToHex();">@result.Colors.ColorAsWord.Name</td>
+                <td style="color: #fff; background-color: @result.Colors.ColorAsHex;">@result.Colors.ColorAsHex</td>
+                <td style="color: #fff; background-color: @responseIsCorrect;"><strong>@result.SameColor</strong></td>
+                <td>@result.TimeInSeconds s</td>
             </tr>
         }
     </tbody>
 </table>
+
+<div>
+    <div><strong>Wrong answers: @Model.WrongAnswers</strong></div>
+    <div><strong>Total Time (seconds): @Model.TotalTime</strong></div>
+    <div><strong>Avg Time (seconds): @Model.AverageTime</strong></div>
+</div>
+

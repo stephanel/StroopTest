@@ -44,9 +44,6 @@ namespace StroopTest.Tests
                 .Returns(new List<StepModel>());
 
             var mockColorProvider = new Mock<IColorProvider>();
-            //mockColorProvider
-            //    .Setup(x => x.GetRandomColor())
-            //    .Returns(new ColorsModel());
 
             var settings = new StroopTestSettings();
 
@@ -56,10 +53,9 @@ namespace StroopTest.Tests
             var actual = controller.Start();
 
             // Assert
-            mockColorProvider.Verify(x => x.GetCongruentColor(), Times.Exactly(10));
-            mockColorProvider.Verify(x => x.GetIncongruentColor(), Times.Exactly(10));
-            mockColorProvider.Verify(x => x.GetNeutralColor(), Times.Exactly(10));
-
+            mockColorProvider.Verify(x => x.GetCongruentColor(), Times.Exactly(20));
+            mockColorProvider.Verify(x => x.GetIncongruentColor(), Times.Exactly(20));
+ 
             mockSessionStorage.Verify(x => x.GetObjectFromJson<List<StepModel>>(It.IsAny<string>()));
         }
 
@@ -81,9 +77,6 @@ namespace StroopTest.Tests
                 .Returns(new List<StepModel>() { expectedModel });
 
             var mockColorProvider = new Mock<IColorProvider>();
-            //mockColorProvider
-            //    .Setup(x => x.GetRandomColor())
-            //    .Returns(expectedColorModel);
 
             var settings = new StroopTestSettings();
 
@@ -192,7 +185,7 @@ namespace StroopTest.Tests
             var mockTempData = new Mock<ITempDataDictionary>();
             mockTempData
                 .SetupGet(x => x[It.IsAny<string>()])
-                .Returns(30);
+                .Returns(40);
 
             var controller = new HomeController(mockSessionStorage.Object, mockColorProvider.Object, settings);
             controller.TempData = mockTempData.Object;
