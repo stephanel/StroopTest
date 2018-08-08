@@ -24,6 +24,11 @@ namespace StroopTest.Services
             _httpContextAccessor.HttpContext.Session.SetObjectAsJson(key, value);
         }
 
+        public void SetString(string key, string value)
+        {
+            _httpContextAccessor.HttpContext.Session.SetString(key, value);
+        }
+
         public T GetObjectFromJson<T>(string key)
             where T : new()
         {
@@ -33,6 +38,11 @@ namespace StroopTest.Services
                 value = new T();
 
             return value;
+        }
+
+        public string GetString(string key)
+        {
+            return _httpContextAccessor.HttpContext.Session.GetString(key);
         }
     }
 }

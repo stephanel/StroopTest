@@ -1,0 +1,15 @@
+﻿@using StroopTest.Extensions;
+
+<div class="home centered">
+    <p class="text-center">
+        <span class="title">@ViewBag.PhaseTitle</span>
+        <br />
+        <span class="infos">@ViewBag.PhaseInfos</span>
+    </p>
+    <p class="invite text-center">Press space bar to continue...</p>
+</div>
+
+<script src="~/js/stroop.js"></script>
+<script type="text/javascript">
+    var startUrl = '@Url.GetAction("NextStep", ViewContext.RouteData.Values["Controller"].ToString(), new { PhaseNumber = ViewBag.PhaseNumber })';
+</script>

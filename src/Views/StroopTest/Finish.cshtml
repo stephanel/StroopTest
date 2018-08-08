@@ -28,7 +28,7 @@
 
 
 <script type="text/javascript">
-var indexUrl = '@Url.GetAction("Index", "Home")';
+var indexUrl = '@Url.GetAction("Index", ViewContext.RouteData.Values["Controller"].ToString())';
 </script>
 
 @section Scripts

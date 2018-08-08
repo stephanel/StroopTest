@@ -1,10 +1,10 @@
 ﻿@using StroopTest.Extensions;
 
 <div class="home centered">
-    Press space bar to start...
+    <p>Press space bar to start...</p>
 </div>
 
 <script src="~/js/stroop.js"></script>
 <script type="text/javascript">
-    var startUrl = '@Url.GetAction("Start", "Home")';
+    var startUrl = '@Url.GetAction("Start", ViewContext.RouteData.Values["Controller"].ToString())';
 </script>

@@ -66,7 +66,7 @@ namespace StroopTest
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=StroopTest}/{action=Index}/{id?}");
             });
         }
     }

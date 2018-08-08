@@ -1,0 +1,23 @@
+@model StepModel
+
+@if (Model != null)
+{
+    <div class="centered word" style="color: @Model.Colors.ColorAsHex;">
+        <strong>@Model.Colors.ColorAsWord.Name</strong>
+    </div>
+}
+
+    <form id="globalForm" asp-controller="@ViewContext.RouteData.Values["Controller"].ToString()" asp-action="GoToNextStep" method="post">
+        <!-- Input and Submit elements -->
+        <input asp-for="PhaseNumber" type="hidden" />
+        <input asp-for="StepNumber" type="hidden" />
+        <input asp-for="Colors.ColorAsWord.Name" type="hidden" />
+        <input asp-for="Colors.ColorAsHex" type="hidden" />
+        <input asp-for="SameColor" type="hidden" id="sameColorField" />
+        <input asp-for="ElapsedTime" type="hidden" id="elapsedTimeField" />
+    </form>
+
+@section Scripts
+{
+    <script src="~/js/stroop.js"></script>
+}
