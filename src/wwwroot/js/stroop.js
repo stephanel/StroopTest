@@ -8,41 +8,50 @@ var KeyCodes = {
 
 var startTime = new Date();
 
-document.onkeydown = function(e) {
+document.onkeydown = function (e) {
     console.log('keydown');
     e = e || window.event;
     var charCode = (typeof e.which == "number") ? e.which : e.keyCode
-    if ( Object.values(KeyCodes).indexOf(charCode) > -1 ) {
+    if (Object.values(KeyCodes).indexOf(charCode) > -1) {
 
         var elapsedTime = (new Date()) - startTime;
 
-        switch(charCode)
-        {
-            case KeyCodes.SPACE:
+        if (currentPageIsTestPhaseStarter()) {
+            if (charCode == KeyCodes.SPACE) {
                 start();
-                break;
-            
-            case KeyCodes.LEFT:
-                goNextStep(true, elapsedTime);
-                break;
-            
-            case KeyCodes.RIGHT:
-                goNextStep(false, elapsedTime);
-                break;
+            }
+        }
+        else
+        {
+
+            switch (charCode) {
+
+                case KeyCodes.LEFT:
+                    goNextStep(true, elapsedTime);
+                    break;
+
+                case KeyCodes.RIGHT:
+                    goNextStep(false, elapsedTime);
+                    break;
+            }
+
         }
     }
 }
 
 
-function start(){
+function start() {
     document.onkeydown = null;
     window.location = startUrl;
 }
 
-function goNextStep(sameColor, elapsedTime)
-{
+function goNextStep(sameColor, elapsedTime) {
     document.onkeydown = null;
     $('#sameColorField').val(sameColor);
     $('#elapsedTimeField').val(elapsedTime);
     $('#globalForm').submit();
+}
+
+function currentPageIsTestPhaseStarter() {
+    return typeof isTestPhaseStarter !== 'undefined';
 }

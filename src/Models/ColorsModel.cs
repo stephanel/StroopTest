@@ -1,5 +1,4 @@
 using StroopTest.Extensions;
-using System.Drawing;
 
 namespace StroopTest.Models
 {

@@ -1,8 +1,8 @@
 ﻿using Moq;
 using StroopTest.Extensions;
 using StroopTest.Interfaces;
+using StroopTest.Models;
 using StroopTest.Services;
-using System.Drawing;
 using Xunit;
 
 namespace StroopTest.Tests
@@ -16,7 +16,7 @@ namespace StroopTest.Tests
             // Arrange
             var mockedColorRepository = new Mock<IColorRepository>();
             mockedColorRepository
-                .Setup(x => x.GetColors()).Returns(new Color[] { Color.Yellow });
+                .Setup(x => x.GetColors()).Returns(new Color[] { Color.YELLOW });
 
             var mockedRandomGenerator = new Mock<IRandomGenerator>();
             mockedRandomGenerator
@@ -30,7 +30,7 @@ namespace StroopTest.Tests
 
             // Assert
             Assert.Equal("#FFFF00", actual.ColorAsHex);
-            Assert.Equal(Color.Yellow, actual.ColorAsWord);
+            Assert.Equal(Color.YELLOW, actual.ColorAsWord);
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace StroopTest.Tests
             // Arrange
             var mockedColorRepository = new Mock<IColorRepository>();
             mockedColorRepository
-                .Setup(x => x.GetColors()).Returns(new Color[] { Color.Yellow, Color.Blue });
+                .Setup(x => x.GetColors()).Returns(new Color[] { Color.YELLOW, Color.BLUE });
 
             var mockedRandomGenerator = new Mock<IRandomGenerator>();
             mockedRandomGenerator
@@ -53,7 +53,7 @@ namespace StroopTest.Tests
             var actual = provider.GetIncongruentColor();
 
             // Assert
-            Assert.Equal(Color.Yellow, actual.ColorAsWord);
+            Assert.Equal(Color.YELLOW, actual.ColorAsWord);
             Assert.NotEqual(actual.ColorAsHex, actual.ColorAsWord.ToHex());
         }
 
@@ -64,7 +64,7 @@ namespace StroopTest.Tests
             // Arrange
             var mockedColorRepository = new Mock<IColorRepository>();
             mockedColorRepository
-                .Setup(x => x.GetColors()).Returns(new Color[] { Color.Yellow });
+                .Setup(x => x.GetColors()).Returns(new Color[] { Color.YELLOW });
 
             var mockedRandomGenerator = new Mock<IRandomGenerator>();
             mockedRandomGenerator
@@ -78,7 +78,7 @@ namespace StroopTest.Tests
 
             // Assert
             Assert.Equal("#000000", actual.ColorAsHex);
-            Assert.Equal(Color.Yellow, actual.ColorAsWord);
+            Assert.Equal(Color.YELLOW, actual.ColorAsWord);
         }
     }
 }

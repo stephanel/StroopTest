@@ -26,7 +26,7 @@ namespace StroopTest.Models
         {
             get
             {
-                return Color.Black.ToHex().Equals(Colors.ColorAsHex);
+                return Color.BLACK.ToHex().Equals(Colors.ColorAsHex);
             }
         }
 

@@ -3,11 +3,11 @@ using StroopTest.Extensions;
 using StroopTest.Models;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace StroopTest.Services
-{    public class ColorProvider : IColorProvider
+{
+    public class ColorProvider : IColorProvider
     {
         private readonly IColorRepository _colorRepository;
         private readonly IRandomGenerator _randomGenerator;
@@ -29,7 +29,7 @@ namespace StroopTest.Services
             return new ColorsModel()
             {
                 ColorAsWord = randomColor,
-                ColorAsHex = Color.Black.ToHex()
+                ColorAsHex = Color.BLACK.ToHex()
             };
         }
 
